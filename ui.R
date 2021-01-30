@@ -58,7 +58,7 @@ shinyUI(fluidPage(
                      actionButton("submit", "描画"),
                      downloadButton('downloadData', 'GIF Download'),
                      sliderInput("color",
-                                 label = "色の調整",
+                                 label = "色の調整(10万人当たりの感染者数の最大値より大きくしてください。)",
                                  min = 10,
                                  max = 500,
                                  value = 200,)
