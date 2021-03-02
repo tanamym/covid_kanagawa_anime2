@@ -58,10 +58,7 @@ webshot :: install_phantomjs()
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
-    #コロナのデータ読み込み
-    #data<-fread("https://dl.dropboxusercontent.com/s/6mztoeb6xf78g5w/COVID-19.csv", encoding="UTF-8")
-    #修正済みデータの読み込み
-    #data<-fread("kanagawa.csv", encoding="UTF-8")
+ #修正済みデータの読み込み
     data<-fread("kanagawa.csv", encoding="UTF-8") %>%
       mutate(確定日= as.Date(確定日,format = "%m/%d/%Y"))
     patient<-
@@ -215,6 +212,11 @@ shinyServer(function(input, output, session) {
                    by="N03_004", all=F,duplicateGeoms = TRUE)
        #色設定
        pal <- colorNumeric(palette=c("white","red"),domain=c(0,input$color), reverse=F)
+       pal2<-
+         data7.2@data%>%
+         mutate(col=pal(count_j),
+                col2=ifelse(count_j>input$color,"red",col),
+                flag=ifelse(count_j>input$color,paste0(input$color,"~"),paste0(count_j%/%10*10,"~")))
        data7.2%>%
          leaflet() %>%
          fitBounds(lng1=139.124343, lat1=35.117843, lng2=139.652899, lat2=35.665052)%>% 
@@ -223,11 +225,14 @@ shinyServer(function(input, output, session) {
                      weight=1,
                      color = "#666",
                      #labelOptions = labelOptions(noHide = T, textOnly = TRUE),
-                     fillColor = ~pal(data7.2@data$count_j),
+                     fillColor = ~pal2$col2,
                      label = paste0(data7.2@data$N03_004,round(data7.2@data$count_j,2))
          )%>%
-      
-       addControl(tags$div(HTML(paste(a,b,sep = "~")))  , position = "topright")
+         addLegend(data=pal2%>%distinct(flag,.keep_all = T)%>%arrange(count_j),
+                   position="topright",color=~col2,labels=~flag,
+                   title = "count",opacity = 1,
+         )%>%
+         addControl(tags$div(HTML(paste(a,b,sep = "~")))  , position = "bottomright")
        
        
     }

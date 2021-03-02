@@ -60,8 +60,8 @@ shinyUI(fluidPage(
                      sliderInput("color",
                                  label = "色の調整(10万人当たりの感染者数の最大値より大きくしてください。)",
                                  min = 10,
-                                 max = 500,
-                                 value = 200,)
+                                 max = 1000,
+                                 value = 500,)
                      
                      
                      ),
