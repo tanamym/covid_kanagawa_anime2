@@ -176,7 +176,7 @@ shinyServer(function(input, output, session) {
     #   mutate(N03_004=ifelse(N03_003=="横浜市","横浜市",
     #                         ifelse(N03_003=="相模原市","相模原市",N03_004)))%>%
     #   mutate(N03_004=ifelse(N03_003=="川崎市",paste0(N03_003,N03_004),N03_004))
-    shp <-read_sf("N03-190101_14_GML/N03-19_14_190101.shp",options = "ENCODING=CP932") 
+    shp <-read_sf("N03-190101_14_GML/N03-19_14_190101_2.shp",options = "ENCODING=CP932") 
     l1=function(a,b){
        #集計
        data7.1<-data7%>%
