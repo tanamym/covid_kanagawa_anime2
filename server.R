@@ -134,7 +134,7 @@ shinyServer(function(input, output, session) {
   # 
   # data7<-bind_rows(data2,data3,kanagawa2,kawasaki,chigasaki)
   data7<-
-    read.csv("https://raw.githubusercontent.com/tanamym/covid19_colopressmap_isehara/main/coviddata.csv",fileEncoding = "SJIS")%>%
+    fread("https://raw.githubusercontent.com/tanamym/covid19_colopressmap_isehara/main/coviddata.csv",encoding = "UTF-8")%>%
     mutate(Fixed_Date=as.Date(Fixed_Date))%>%
     filter(!is.na(X))
   date<-
