@@ -87,6 +87,7 @@ shinyServer(function(input, output, session) {
     arrange(desc(Date)) %>%
     mutate(Date=as.Date(Date,origin="1970-01-01")) %>%
     filter(Date>="2020-04-20")
+  xy<-read.csv("xy.csv",encoding = "SHIFT-JIS")
     output$date1<-
       renderUI({
         dateInput("z1",
@@ -119,12 +120,15 @@ shinyServer(function(input, output, session) {
     shp <-read_sf("N03-190101_14_GML/N03-19_14_190101_2.shp",options = "ENCODING=CP932") 
     l1=function(a,b){
        #集計
+      w<-input$w
        data7.1<-data7%>%
          filter(Fixed_Date>=a,Fixed_Date<=b)%>%
          group_by(Residential_City,X,Y)%>%
          summarise(count=n())%>%
          ungroup()%>%
-         filter(X>0,Y>0)
+         filter(X>0,Y>0)%>%
+         full_join(xy,by=c("Residential_City"="City"))%>%
+         mutate(count=ifelse(is.na(X),0,count))
       
       
        jinko2<-left_join(data7.1,jinko,by=c("Residential_City"="City"))
@@ -135,12 +139,12 @@ shinyServer(function(input, output, session) {
          sp::merge(shp, jinko3,
                    by="N03_004", all=F,duplicateGeoms = TRUE)
        #色設定
-       pal <- colorNumeric(palette=c("white","red"),domain=c(0,input$color), reverse=F)
+       pal <- colorNumeric(palette=c("white","red"),domain=c(0,input$color*w), reverse=F)
        pal2<-
          data7.2%>%
          mutate(col=pal(count_j),
-                col2=ifelse(count_j>input$color,"red",col),
-                flag=ifelse(count_j>input$color,paste0(input$color,"~"),paste0(count_j%/%10*10,"~")))
+                col2=ifelse(count_j>input$color*w,"red",col),
+                flag=ifelse(count_j>input$color*w,paste0(input$color*w,"~"),paste0(count_j%/%10*10,"~")))
        data7.2%>%
          leaflet() %>%
          #fitBounds(lng1=139.124343, lat1=35.117843, lng2=139.652899, lat2=35.665052)%>% 
